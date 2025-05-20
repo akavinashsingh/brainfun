@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KidLearn: Fun Educational Games</title>
+    <style>
+        :root {
+            --primary: #4caf50;
+            --secondary: #ff9800;
+            --accent: #2196f3;
+            --danger: #f44336;
+            --success: #8bc34a;
+            --light: #f5f5f5;
+            --dark: #333;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+            background-color: #f0f9ff;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        nav {
+            background-color: white;
+            display: flex;
+            justify-content: center;
+            padding: 0.5rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        nav button {
+            background-color: white;
+            border: 2px solid var(--primary);
+            border-radius: 20px;
+            color: var(--primary);
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: bold;
+            margin: 0 0.5rem;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        nav button:hover, nav button.active {
+            background-color: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        /* Main Content Styles */
+        main {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .game-container {
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            min-height: 500px;
+            margin-bottom: 2rem;
+            display: none;
+        }
+        
+        .game-container.active {
+            display: block;
+        }
+        
+        .game-title {
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+        }
+        
+        .game-instructions {
+            background-color: #fffde7;
+            border-left: 4px solid var(--secondary);
+            padding: 1rem;
+            margin-bottom: 2rem;
+            border-radius: 0 10px 10px 0;
+        }
+        
+        /* Game-specific styles */
+        /* Math Game */
+        .math-problem {
+            font-size: 2rem;
+            text-align: center;
+            margin: 2rem 0;
+        }
+        
+        .answer-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .answer-option {
+            background-color: var(--light);
+            border: 2px solid var(--accent);
+            border-radius: 15px;
+            color: var(--dark);
+            cursor: pointer;
+            font-size: 1.5rem;
+            padding: 1rem 2rem;
+            transition: all 0.2s ease;
+        }
+        
+        .answer-option:hover {
+            background-color: var(--accent);
+            color: white;
+            transform: scale(1.05);
+        }
+        
+        /* Word Scramble */
+        .scramble-word {
+            font-size: 2.5rem;
+            text-align: center;
+            margin: 2rem 0;
+            letter-spacing: 0.5rem;
+            color: var(--secondary);
+        }
+        
+        .word-input {
+            display: block;
+            width: 80%;
+            max-width: 400px;
+            margin: 2rem auto;
+            padding: 1rem;
+            font-size: 1.2rem;
+            border: 2px solid var(--accent);
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        /* Memory Game */
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            max-width: 600px;
+            margin: 2rem auto;
+        }
+        
+        .memory-card {
+            aspect-ratio: 1;
+            background-color: var(--primary);
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .memory-card.flipped {
+            transform: rotateY(180deg);
+            background-color: white;
+        }
+        
+        .memory-card-content {
+            display: none;
+            transform: rotateY(180deg);
+        }
+        
+        .memory-card.flipped .memory-card-content {
+            display: block;
+        }
+        
+        /* Spelling Bee */
+        .spelling-container {
+            text-align: center;
+        }
+        
+        .current-word {
+            font-size: 1.5rem;
+            margin: 1rem 0;
+        }
+        
+        .play-sound {
+            background-color: var(--accent);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            font-size: 1.5rem;
+            height: 60px;
+            width: 60px;
+            margin: 1rem auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+        
+        .play-sound:hover {
+            background-color: #0d8aee;
+            transform: scale(1.1);
+        }
+        
+        /* Common Game Elements */
+        .btn-game {
+            background-color: var(--primary);
+            border: none;
+            border-radius: 30px;
+            color: white;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin: 1rem auto;
+            padding: 0.75rem 2rem;
+            display: block;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-game:hover {
+            background-color: #3d8b40;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        
+        .result-feedback {
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin: 2rem auto;
+            max-width: 400px;
+            padding: 1rem;
+            text-align: center;
+        }
+        
+        .feedback-correct {
+            background-color: #e8f5e9;
+            border: 2px solid var(--success);
+            color: #2e7d32;
+        }
+        
+        .feedback-incorrect {
+            background-color: #ffebee;
+            border: 2px solid var(--danger);
+            color: #c62828;
+        }
+        
+        .score-display {
+            text-align: center;
+            font-size: 1.25rem;
+            margin-top: 1rem;
+        }
+        
+        /* Drawing Game */
+        .drawing-container {
+            text-align: center;
+        }
+        
+        .canvas-container {
+            border: 3px solid var(--primary);
+            border-radius: 10px;
+            background-color: white;
+            margin: 1rem auto;
+            max-width: 600px;
+            overflow: hidden;
+        }
+        
+        #drawingCanvas {
+            cursor: crosshair;
+        }
+        
+        .drawing-tools {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 1rem 0;
+            flex-wrap: wrap;
+        }
+        
+        .color-picker {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin: 1rem 0;
+            flex-wrap: wrap;
+        }
+        
+        .color-option {
+            height: 30px;
+            width: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid #ddd;
+            transition: transform 0.2s ease;
+        }
+        
+        .color-option:hover, .color-option.selected {
+            transform: scale(1.2);
+            border-color: #333;
+        }
+        
+        .drawing-tool-btn {
+            background-color: var(--light);
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.2s ease;
+        }
+        
+        .drawing-tool-btn:hover, .drawing-tool-btn.selected {
+            background-color: var(--accent);
+            color: white;
+        }
+        
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            main {
+                padding: 1rem;
+            }
+            
+            .memory-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            nav button {
+                font-size: 0.9rem;
+                padding: 0.4rem 0.8rem;
+            }
+            
+            .game-title {
+                font-size: 1.5rem;
+            }
+            
+            .math-problem {
+                font-size: 1.5rem;
+            }
+            
+            .answer-option {
+                font-size: 1.2rem;
+                padding: 0.75rem 1.5rem;
+            }
+            
+            .scramble-word {
+                font-size: 2rem;
+                letter-spacing: 0.3rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .memory-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            nav {
+                flex-wrap: wrap;
+            }
+            
+            nav button {
+                margin: 0.3rem;
+                font-size: 0.8rem;
+            }
+            
+            .game-container {
+                padding: 1rem;
+            }
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--primary);
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>KidLearn: Fun Educational Games</h1>
+        <p>Learn while you play!</p>
+    </header>
+    
+    <nav>
+        <button id="mathBtn" class="active">Math Challenge</button>
+        <button id="wordBtn">Word Scramble</button>
+        <button id="memoryBtn">Memory Match</button>
+        <button id="spellingBtn">Spelling Bee</button>
+        <button id="drawingBtn">Creative Drawing</button>
+    </nav>
+    
+    <main>
+        <!-- Math Game -->
+        <section id="mathGame" class="game-container active">
+            <h2 class="game-title">Math Challenge</h2>
+            <div class="game-instructions">
+                <p>Solve the math problem by selecting the correct answer. Each correct answer earns you a point!</p>
+            </div>
+            
+            <div class="math-problem" id="mathProblem">What is 5 + 3?</div>
+            
+            <div class="answer-container" id="answerOptions">
+                <button class="answer-option">7</button>
+                <button class="answer-option">8</button>
+                <button class="answer-option">9</button>
+                <button class="answer-option">10</button>
+            </div>
+            
+            <div id="mathFeedback" class="result-feedback" style="display: none;"></div>
+            
+            <button id="nextMathBtn" class="btn-game">Next Problem</button>
+            
+            <div class="score-display">
+                Score: <span id="mathScore">0</span>
+            </div>
+        </section>
+        
+        <!-- Word Scramble Game -->
+        <section id="wordGame" class="game-container">
+            <h2 class="game-title">Word Scramble</h2>
+            <div class="game-instructions">
+                <p>Unscramble the letters to form a real word. Type your answer in the box below.</p>
+            </div>
+            
+            <div class="scramble-word" id="scrambledWord">CLHOSO</div>
+            
+            <input type="text" class="word-input" id="wordInput" placeholder="Type your answer...">
+            
+            <button id="checkWordBtn" class="btn-game">Check Answer</button>
+            
+            <div id="wordFeedback" class="result-feedback" style="display: none;"></div>
+            
+            <button id="nextWordBtn" class="btn-game">Next Word</button>
+            
+            <div class="score-display">
+                Score: <span id="wordScore">0</span>
+            </div>
+        </section>
+        
+        <!-- Memory Match Game -->
+        <section id="memoryGame" class="game-container">
+            <h2 class="game-title">Memory Match</h2>
+            <div class="game-instructions">
+                <p>Find all matching pairs of cards by flipping them two at a time. Remember the positions!</p>
+            </div>
+            
+            <div class="memory-grid" id="memoryGrid">
+                <!-- Cards will be generated by JavaScript -->
+            </div>
+            
+            <button id="resetMemoryBtn" class="btn-game">Reset Game</button>
+            
+            <div class="score-display">
+                Pairs Found: <span id="memoryScore">0</span> / 8
+            </div>
+        </section>
+        
+        <!-- Spelling Bee Game -->
+        <section id="spellingGame" class="game-container">
+            <h2 class="game-title">Spelling Bee</h2>
+            <div class="game-instructions">
+                <p>Listen to the word and type the correct spelling. Click the sound button to hear the word.</p>
+            </div>
+            
+            <div class="spelling-container">
+                <button class="play-sound" id="playWordSound">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>
+                </button>
+                
+                <div class="current-word" id="currentWord">?????</div>
+                
+                <input type="text" class="word-input" id="spellingInput" placeholder="Type the word...">
+                
+                <button id="checkSpellingBtn" class="btn-game">Check Spelling</button>
+                
+                <div id="spellingFeedback" class="result-feedback" style="display: none;"></div>
+                
+                <button id="nextSpellingBtn" class="btn-game">Next Word</button>
+                
+                <div class="score-display">
+                    Score: <span id="spellingScore">0</span>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Drawing Game -->
+        <section id="drawingGame" class="game-container">
+            <h2 class="game-title">Creative Drawing</h2>
+            <div class="game-instructions">
+                <p>Express your creativity! Use the tools below to draw whatever you like.</p>
+            </div>
+            
+            <div class="drawing-container">
+                <div class="drawing-tools">
+                    <button class="drawing-tool-btn selected" id="pencilTool">Pencil</button>
+                    <button class="drawing-tool-btn" id="brushTool">Brush</button>
+                    <button class="drawing-tool-btn" id="eraserTool">Eraser</button>
+                    <button class="drawing-tool-btn" id="clearCanvas">Clear All</button>
+                </div>
+                
+                <div class="color-picker" id="colorPicker">
+                    <div class="color-option selected" style="background-color: #000000;" data-color="#000000"></div>
+                    <div class="color-option" style="background-color: #FF0000;" data-color="#FF0000"></div>
+                    <div class="color-option" style="background-color: #0000FF;" data-color="#0000FF"></div>
+                    <div class="color-option" style="background-color: #008000;" data-color="#008000"></div>
+                    <div class="color-option" style="background-color: #FFA500;" data-color="#FFA500"></div>
+                    <div class="color-option" style="background-color: #800080;" data-color="#800080"></div>
+                    <div class="color-option" style="background-color: #FF69B4;" data-color="#FF69B4"></div>
+                    <div class="color-option" style="background-color: #00FFFF;" data-color="#00FFFF"></div>
+                </div>
+                
+                <div class="canvas-container">
+                    <canvas id="drawingCanvas" width="600" height="400"></canvas>
+                </div>
+                
+                <button id="saveDrawingBtn" class="btn-game">Save Drawing</button>
+            </div>
+        </section>
+    </main>
+    
+    <footer>
+        <p>© 2025 KidLearn - Fun Educational Games for Children</p>
+    </footer>
+
+    <script>
+        // Navigation functionality
+        const navButtons = document.querySelectorAll('nav button');
+        const gameContainers = document.querySelectorAll('.game-container');
+        
+        navButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all buttons and containers
+                navButtons.forEach(btn => btn.classList.remove('active'));
+                gameContainers.forEach(container => container.classList.remove('active'));
+                
+                // Add active class to clicked button
+                button.classList.add('active');
+                
+                // Show corresponding game container
+                const gameId = button.id.replace('Btn', 'Game');
+                document.getElementById(gameId).classList.add('active');
+            });
+        });
+        
+        // --------------- MATH GAME -----------------
+        let mathScore = 0;
+        let currentAnswer = 8; // Initial answer for 5 + 3
+        
+        function generateMathProblem() {
+            const operations = ['+', '-', '×'];
+            const operation = operations[Math.floor(Math.random() * operations.length)];
+            
+            let num1, num2, answer;
+            
+            if (operation === '+') {
+                num1 = Math.floor(Math.random() * 20) + 1;
+                num2 = Math.floor(Math.random() * 20) + 1;
+                answer = num1 + num2;
+            } else if (operation === '-') {
+                num1 = Math.floor(Math.random() * 20) + 1;
+                num2 = Math.floor(Math.random() * num1) + 1; // Ensure positive result
+                answer = num1 - num2;
+            } else { // Multiplication
+                num1 = Math.floor(Math.random() * 10) + 1;
+                num2 = Math.floor(Math.random() * 10) + 1;
+                answer = num1 * num2;
+            }
+            
+            document.getElementById('mathProblem').textContent = `What is ${num1} ${operation} ${num2}?`;
+            currentAnswer = answer;
+            
+            // Generate options
+            const options = [answer];
+            
+            // Add 3 more random options
+            while (options.length < 4) {
+                // Create somewhat close answers for better challenge
+                let offset = Math.floor(Math.random() * 5) + 1;
+                offset *= Math.random() < 0.5 ? 1 : -1;
+                
+                const newOption = answer + offset;
+                
+                // Ensure no negative numbers and no duplicates
+                if (newOption >= 0 && !options.includes(newOption)) {
+                    options.push(newOption);
+                }
+            }
+            
+            // Shuffle options
+            const shuffledOptions = options.sort(() => Math.random() - 0.5);
+            
+            // Update option buttons
+            const answerOptions = document.querySelectorAll('.answer-option');
+            shuffledOptions.forEach((option, index) => {
+                answerOptions[index].textContent = option;
+            });
+            
+            // Hide feedback
+            document.getElementById('mathFeedback').style.display = 'none';
+        }
+        
+        // Set up answer checking
+        document.querySelectorAll('.answer-option').forEach(option => {
+            option.addEventListener('click', () => {
+                const selectedAnswer = parseInt(option.textContent);
+                const feedbackElement = document.getElementById('mathFeedback');
+                
+                if (selectedAnswer === currentAnswer) {
+                    feedbackElement.textContent = 'Correct! Great job!';
+                    feedbackElement.className = 'result-feedback feedback-correct';
+                    mathScore++;
+                    document.getElementById('mathScore').textContent = mathScore;
+                } else {
+                    feedbackElement.textContent = `Not quite. The correct answer is ${currentAnswer}.`;
+                    feedbackElement.className = 'result-feedback feedback-incorrect';
+                }
+                
+                feedbackElement.style.display = 'block';
+            });
+        });
+        
+        // Next math problem button
+        document.getElementById('nextMathBtn').addEventListener('click', generateMathProblem);
+        
+        // Generate initial math problem
+        generateMathProblem();
+        
+        // --------------- WORD SCRAMBLE GAME -----------------
+        let wordScore = 0;
+        let currentWord = 'SCHOOL';
+        
+        const wordList = [
+            'SCHOOL', 'APPLE', 'FRIEND', 'PENCIL', 'SPACE', 
+            'GARDEN', 'RAINBOW', 'PLANET', 'DINOSAUR', 'COMPUTER',
+            'TOKEN', 'TRAVEL', 'MUSIC', 'PUZZLE', 'SCIENCE',
+            'ANIMAL', 'FLOWER', 'OCEAN', 'FOREST', 'MOUNTAIN'
+        ];
+        
+        function scrambleWord(word) {
+            const wordArray = word.split('');
+            let currentIndex = wordArray.length;
+            
+            // Shuffle the array
+            while (currentIndex !== 0) {
+                const randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                
+                // Swap elements
+                [wordArray[currentIndex], wordArray[randomIndex]] = [wordArray[randomIndex], wordArray[currentIndex]];
+            }
+            
+            // Ensure the scrambled word is different from the original
+            if (wordArray.join('') === word) {
+                return scrambleWord(word);
+            }
+            
+            return wordArray.join('');
+        }
+        
+        function generateWordPuzzle() {
+            const randomIndex = Math.floor(Math.random() * wordList.length);
+            currentWord = wordList[randomIndex];
+            
+            const scrambled = scrambleWord(currentWord);
+            document.getElementById('scrambledWord').textContent = scrambled;
+            document.getElementById('wordInput').value = '';
+            document.getElementById('wordFeedback').style.display = 'none';
+        }
+        
+        document.getElementById('checkWordBtn').addEventListener('click', () => {
+            const userAnswer = document.getElementById('wordInput').value.trim().toUpperCase();
+            const feedbackElement = document.getElementById('wordFeedback');
+            
+            if (userAnswer === currentWord) {
+                feedbackElement.textContent = 'Correct! You unscrambled the word!';
+                feedbackElement.className = 'result-feedback feedback-correct';
+                wordScore++;
+                document.getElementById('wordScore').textContent = wordScore;
+            } else {
+                feedbackElement.textContent = `Not quite. The correct word is ${currentWord}.`;
+                feedbackElement.className = 'result-feedback feedback-incorrect';
+            }
+            
+            feedbackElement.style.display = 'block';
+        });
+        
+        document.getElementById('nextWordBtn').addEventListener('click', generateWordPuzzle);
+        
+        // Generate initial word puzzle
+        generateWordPuzzle();
+        
+        // --------------- MEMORY MATCH GAME -----------------
+        let memoryScore = 0;
+        let flippedCards = [];
+        let matchedPairs = 0;
+        let canFlip = true;
+        
+        const symbols = ['🍎', '🚀', '🌈', '🦖', '🐬', '🦁', '🌮', '🎸'];
+        
+        function createMemoryGame() {
+            const grid = document.getElementById('memoryGrid');
+            grid.innerHTML = '';
+            
+            // Create array with pairs of symbols
+            const cardSymbols = [...symbols, ...symbols];
+            
+            // Shuffle the array
+            cardSymbols.sort(() => Math.random() - 0.5);
+            
+            // Create cards
+            cardSymbols.forEach((symbol, index) => {
+                const card = document.createElement('div');
+                card.className = 'memory-card';
+                card.dataset.symbol = symbol;
+                card.dataset.index = index;
+                
+                const content = document.createElement('div');
+                content.className = 'memory-card-content';
+                content.textContent = symbol;
+                
+                card.appendChild(content);
+                grid.appendChild(card);
+                
+                card.addEventListener('click', flipCard);
+            });
+            
+            // Reset game state
+            memoryScore = 0;
+            matchedPairs = 0;
+            flippedCards = [];
+            canFlip = true;
+            document.getElementById('memoryScore').textContent = '0';
+        }
+        
+        function flipCard() {
+            // Skip if card is already flipped or we can't flip
+            if (!canFlip || this.classList.contains('flipped') || flippedCards.length >= 2) {
+                return;
+            }
+            
+            this.classList.add('flipped');
+            flippedCards.push(this);
+            
+            if (flippedCards.length === 2) {
+                canFlip = false;
+                
+                // Check if cards match
+                if (flippedCards[0].dataset.symbol === flippedCards[1].dataset.symbol) {
+                    // Match found
+                    matchedPairs++;
+                    document.getElementById('memoryScore').textContent = matchedPairs;
+                    
+                    // Remove click event from matched cards
+                    flippedCards.forEach(card => {
+                        card.removeEventListener('click', flipCard);
+                    });
+                    
+                    flippedCards = [];
+                    canFlip = true;
+                    
+                    // Check if all pairs are found
+                    if (matchedPairs === symbols.length) {
+                        setTimeout(() => {
+                            alert('Congratulations! You found all pairs!');
+                        }, 500);
+                    }
+                } else {
+                    // No match, flip back
+                    setTimeout(() => {
+                        flippedCards.forEach(card => card.classList.remove('flipped'));
+                        flippedCards = [];
+                        canFlip = true;
+                    }, 1000);
+                }
+            }
+        }
+        
+        document.getElementById('resetMemoryBtn').addEventListener('click', createMemoryGame);
+        
+        // Initialize memory game
+        createMemoryGame();
+        
+        // --------------- SPELLING BEE GAME -----------------
+        let spellingScore = 0;
+        let currentSpellingWord = '';
+        
+        const spellingWords = [
+            { word: 'apple', hint: 'A red fruit' },
+            { word: 'book', hint: 'You read it' },
+            { word: 'cat', hint: 'A furry pet that meows' },
+            { word: 'dog', hint: 'A loyal pet that barks' },
+            { word: 'elephant', hint: 'A large gray animal with a trunk' },
+            { word: 'flower', hint: 'Colorful and grows in gardens' },
+            { word: 'guitar', hint: 'A musical instrument with strings' },
+            { word: 'house', hint: 'Where people live' },
+            { word: 'island', hint: 'Land surrounded by water' },
+            { word: 'jellyfish', hint: 'Ocean creature that can sting' }
+        ];
+        
+        function generateSpellingWord() {
+            const randomIndex = Math.floor(Math.random() * spellingWords.length);
+            const spellingItem = spellingWords[randomIndex];
+            currentSpellingWord = spellingItem.word;
+            
+            // Display word as asterisks
+            document.getElementById('currentWord').textContent = '?'.repeat(currentSpellingWord.length);
+            document.getElementById('spellingInput').value = '';
+            document.getElementById('spellingFeedback').style.display = 'none';
+        }
+        
+        // Text-to-speech function
+        function speakWord(word) {
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(word);
+                utterance.rate = 0.8; // Slightly slower for clarity
+                utterance.pitch = 1.1; // Slightly higher pitch for child-friendly voice
+                window.speechSynthesis.speak(utterance);
+            } else {
+                alert('Sorry, your browser does not support text-to-speech.');
+            }
+        }
+        
+        document.getElementById('playWordSound').addEventListener('click', () => {
+            speakWord(currentSpellingWord);
+        });
+        
+        document.getElementById('checkSpellingBtn').addEventListener('click', () => {
+            const userSpelling = document.getElementById('spellingInput').value.trim().toLowerCase();
+            const feedbackElement = document.getElementById('spellingFeedback');
+            
+            if (userSpelling === currentSpellingWord) {
+                feedbackElement.textContent = 'Correct spelling! Well done!';
+                feedbackElement.className = 'result-feedback feedback-correct';
+                spellingScore++;
+                document.getElementById('spellingScore').textContent = spellingScore;
+                
+                // Reveal the word
+                document.getElementById('currentWord').textContent = currentSpellingWord;
+            } else {
+                feedbackElement.textContent = `Not quite. The correct spelling is "${currentSpellingWord}".`;
+                feedbackElement.className = 'result-feedback feedback-incorrect';
+                
+                // Reveal the word
+                document.getElementById('currentWord').textContent = currentSpellingWord;
+            }
+            
+            feedbackElement.style.display = 'block';
+        });
+        
+        document.getElementById('nextSpellingBtn').addEventListener('click', generateSpellingWord);
+        
+        // Generate initial spelling word
+        generateSpellingWord();
+        
+        // --------------- DRAWING GAME -----------------
+        let canvas = document.getElementById('drawingCanvas');
+        let ctx = canvas.getContext('2d');
+        let isDrawing = false;
+        let currentTool = 'pencil';
+        let currentColor = '#000000';
+        let lineWidth = 5;
+        
+        // Set up canvas
+        function setupCanvas() {
+            // Make canvas responsive
+            function resizeCanvas() {
+                const container = document.querySelector('.canvas-container');
+                const newWidth = container.clientWidth;
+                const ratio = canvas.height / canvas.width;
+                
+                canvas.width = newWidth;
+                canvas.height = newWidth * ratio;
+                
+                // Clear and set default fill
+                ctx.fillStyle = 'white';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+            
+            // Initial setup
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+            
+            // Drawing event listeners
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseout', stopDrawing);
+            
+            // Touch support
+            canvas.addEventListener('touchstart', handleTouchStart);
+            canvas.addEventListener('touchmove', handleTouchMove);
+            canvas.addEventListener('touchend', stopDrawing);
+        }
+        
+        function handleTouchStart(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const mouseEvent = new MouseEvent('mousedown', {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            canvas.dispatchEvent(mouseEvent);
+        }
+        
+        function handleTouchMove(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const mouseEvent = new MouseEvent('mousemove', {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            canvas.dispatchEvent(mouseEvent);
+        }
+        
+        function startDrawing(e) {
+            isDrawing = true;
+            draw(e);
+        }
+        
+        function draw(e) {
+            if (!isDrawing) return;
+            
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            ctx.lineJoin = 'round';
+            ctx.lineCap = 'round';
+            
+            if (currentTool === 'pencil') {
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = currentColor;
+            } else if (currentTool === 'brush') {
+                ctx.lineWidth = 10;
+                ctx.strokeStyle = currentColor;
+            } else if (currentTool === 'eraser') {
+                ctx.lineWidth = 20;
+                ctx.strokeStyle = '#FFFFFF';
+            }
+            
+            ctx.lineTo(x, y);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+        }
+        
+        function stopDrawing() {
+            isDrawing = false;
+            ctx.beginPath();
+        }
+        
+        // Set up drawing tools
+        document.querySelectorAll('.drawing-tool-btn').forEach(tool => {
+            tool.addEventListener('click', function() {
+                document.querySelectorAll('.drawing-tool-btn').forEach(t => t.classList.remove('selected'));
+                this.classList.add('selected');
+                currentTool = this.id.replace('Tool', '');
+                
+                if (this.id === 'clearCanvas') {
+                    ctx.fillStyle = 'white';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                }
+            });
+        });
+        
+        // Set up color picker
+        document.querySelectorAll('.color-option').forEach(color => {
+            color.addEventListener('click', function() {
+                document.querySelectorAll('.color-option').forEach(c => c.classList.remove('selected'));
+                this.classList.add('selected');
+                currentColor = this.dataset.color;
+            });
+        });
+        
+        // Save drawing functionality
+        document.getElementById('saveDrawingBtn').addEventListener('click', () => {
+            const link = document.createElement('a');
+            link.download = 'my-drawing.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        });
+        
+        // Initialize drawing canvas
+        setupCanvas();
+        
+        // Add form submission prevention
+        document.addEventListener('submit', (e) => {
+            e.preventDefault();
+        });
+        
+        // Add keyboard event for word games
+        document.getElementById('wordInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('checkWordBtn').click();
+            }
+        });
+        
+        document.getElementById('spellingInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('checkSpellingBtn').click();
+            }
+        });
+    </script>
+</body>
+</html>
